@@ -2,18 +2,12 @@ cmake_minimum_required(VERSION 3.26)
 
 project(QUBOBruteForcing LANGUAGES CXX CUDA)
 
-# -------------------------------------------------------------------
-# C++ & CUDA Standards
-# -------------------------------------------------------------------
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CUDA_STANDARD 17)
 set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 
-# -------------------------------------------------------------------
-# Find CUDA (Lichtenberg GPU nodes, CUDA 12.5)
-# -------------------------------------------------------------------
 find_package(CUDAToolkit QUIET)
 
 if (CUDAToolkit_FOUND)
@@ -24,12 +18,9 @@ else()
     set(WITH_CUDA FALSE)
 endif()
 
-# -------------------------------------------------------------------
-# Executable
-# -------------------------------------------------------------------
 add_executable(${PROJECT_NAME}
     main.cpp
-    gpu_brute_force.cu        # CUDA code
+    gpu_brute_force.cu        
     gpu_brute_force.h
     cpu_brute_force.h
     cuda_debug.h
@@ -44,25 +35,17 @@ add_executable(${PROJECT_NAME}
     timer.h
 )
 
-# -------------------------------------------------------------------
-# CUDA Settings (only if CUDA exists)
-# -------------------------------------------------------------------
 if (WITH_CUDA)
     enable_language(CUDA)
     target_compile_definitions(${PROJECT_NAME} PRIVATE WITH_CUDA)
 
-    # Important for Lichtenberg (Tesla T4)
     set(CMAKE_CUDA_ARCHITECTURES 75)
 
     set_target_properties(${PROJECT_NAME} PROPERTIES
         CUDA_SEPARABLE_COMPILATION ON
     )
 
-    # Link CUDA Runtime
     target_link_libraries(${PROJECT_NAME} PRIVATE CUDA::cudart)
 endif()
 
-# -------------------------------------------------------------------
-# Fix GCC 8 filesystem (must link manually!)
-# -------------------------------------------------------------------
 target_link_libraries(${PROJECT_NAME} PRIVATE stdc++fs)
