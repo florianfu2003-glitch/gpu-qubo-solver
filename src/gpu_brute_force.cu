@@ -14,9 +14,6 @@
 
 #define MAX_VARS_BRUTE_FORCE 63
 
-// ============================================================================
-//  device helper functions (Dense)
-// ============================================================================
 template<typename vT>
 __device__ inline vT d_get_state_entry_product(std::size_t state,
                                                std::size_t n,
@@ -71,9 +68,6 @@ __device__ vT d_compute_row_flip_energy_difference_dense(const vT* mat,
     return diff;
 }
 
-// ============================================================================
-//  device helper functions (Sparse CSR)
-// ============================================================================
 template<typename vT, typename iT>
 __device__ vT d_compute_energy_sparse(const vT* values,
                                       const iT* offsets,
@@ -132,9 +126,6 @@ __device__ vT d_compute_row_flip_energy_difference_sparse(const vT* values,
     return diff;
 }
 
-// ============================================================================
-//  kernels
-// ============================================================================
 template<typename vT>
 __global__ void dense_bruteforce_kernel(const vT* d_mat,
                                         std::size_t n,
@@ -213,12 +204,6 @@ __global__ void sparse_bruteforce_kernel(const vT* d_values,
     d_bestEnergy[tid] = bestEnergy;
 }
 
-// ============================================================================
-//  helper implementations for different matrix types
-//  (free function templates, overloaded by MatrixType)
-// ============================================================================
-
-// generic fallback: unsupported matrix type
 template<typename iT, typename vT, typename sT, typename MatrixType>
 static std::vector<std::vector<sT>>
 gpu_bruteforce_impl(MatrixType const &)
@@ -411,9 +396,6 @@ return result;
 
 }
 
-// ============================================================================
-//  GPUQUBOBruteForcer::brute_force_optima implementation
-// ============================================================================
 template<typename iT, typename vT, typename sT, typename MatrixType>
 std::vector<std::vector<sT>>
 GPUQUBOBruteForcer<iT, vT, sT, MatrixType>::brute_force_optima(MatrixType const & mat)
@@ -421,12 +403,6 @@ GPUQUBOBruteForcer<iT, vT, sT, MatrixType>::brute_force_optima(MatrixType const 
     return gpu_bruteforce_impl<iT, vT, sT>(mat);
 }
 
-// ============================================================================
-//  explicit instantiations for the types used in this project
-// ============================================================================
 template struct GPUQUBOBruteForcer<IndexType, ValueType, StateType, DenseMatrix<ValueType>>;
 template struct GPUQUBOBruteForcer<IndexType, ValueType, StateType, SparseMatrix<ValueType, IndexType>>;
 
-// ============================================================================
-//  end of file
-// ============================================================================
