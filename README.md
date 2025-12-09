@@ -82,25 +82,25 @@ per-state cost from `O(n²)` to `O(n)`.
 gpu-qubo-solver/
 │
 ├── CMakeLists.txt           # Top-level CMake build script
-├── README.md                # Project description
-├── run.sh                   # Optional helper script (e.g. SLURM job on a cluster)
+├── run.sh                   # Optional helper script (e.g. SLURM job)
 │
 ├── src/
-│   ├── CMakeLists.txt       # CMake configuration for the library/executable
-│   ├── main.cpp             # Entry point (CPU & GPU comparison and timing)
-│   ├── cpu_brute_force.h    # Naive + incremental CPU brute-force solvers
-│   ├── gpu_brute_force.cu   # CUDA kernels + GPU solver implementation
+│   ├── CMakeLists.txt       # CMake configuration for executable
+│   ├── main.cpp             # Entry point (CPU & GPU comparison)
+│   ├── cpu_brute_force.h    # Naive + incremental CPU solvers
+│   ├── gpu_brute_force.cu   # CUDA kernels + GPU solver
 │   ├── gpu_brute_force.h
 │   ├── qubo_energy.h        # Dense & sparse energy + incremental ΔE
-│   ├── matrix.h             # Dense / sparse matrix representations
+│   ├── matrix.h             # Dense / sparse matrix structures
 │   ├── matrix_reader.h      # MatrixMarket (.mtx) loader
-│   ├── state_vector.h       # Bitset ↔ vector conversions
-│   ├── datatypes.h          # Type aliases used throughout the project
-│   ├── cuda_util.h          # CUDA error handling helpers
-│   ├── cuda_timer.h         # Simple GPU timing utilities
+│   ├── state_vector.h       # Bitset ↔ vector utilities
+│   ├── datatypes.h          # Global typedefs
+│   ├── cuda_util.h          # CUDA helper macros
+│   ├── cuda_timer.h         # GPU timing helpers
 │   ├── cuda_debug.h
-│   └── qubo_brute_forcer.h  # Base class interface for CPU/GPU solvers
+│   └── qubo_brute_forcer.h  # Base class for CPU/GPU solvers
 ```
+
 
 ---
 
