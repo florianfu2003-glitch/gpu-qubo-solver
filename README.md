@@ -104,7 +104,7 @@ gpu-qubo-solver/
 
 ---
 
-## ⚙️ Build Instructions
+## Build Instructions
 
 ### Requirements
 
@@ -135,7 +135,7 @@ module load cuda/12.5 gcc/13.1.0 cmake
 
 ---
 
-## ▶️ Run
+## Run
 
 After building, run the solver with a MatrixMarket `.mtx` file:
 
@@ -170,7 +170,7 @@ On clusters, you can use the included `run.sh` for SLURM submission.
 
 ---
 
-## 🔬 Technical Overview
+## Technical Overview
 
 ### Parallelization Strategy
 
@@ -201,7 +201,7 @@ Both formats support up to **63 variables** (due to 64-bit encoding).
 
 ---
 
-## ⏱ Performance Overview
+## Performance Overview
 
 Benchmarks on NVIDIA Tesla T4 (Lichtenberg Cluster):
 
@@ -215,7 +215,7 @@ Results depend on sparsity structure and GPU architecture.
 
 ---
 
-## ⚠️ Limitations
+## Limitations
 
 - Maximum variables: **63** (due to 64-bit state representation).  
 - Dense GPU kernel uses `O(n²)` memory.  
@@ -224,7 +224,7 @@ Results depend on sparsity structure and GPU architecture.
 
 ---
 
-## 🚧 Future Work
+## Future Work
 
 - Multi-GPU parallelization  
 - Shared-memory optimized kernels  
@@ -235,7 +235,7 @@ Results depend on sparsity structure and GPU architecture.
 
 ---
 
-## 📄 License
+## License
 
 Released under the **MIT License**.  
 Template available at:  
@@ -243,7 +243,7 @@ https://opensource.org/licenses/MIT
 
 ---
 
-## 🙏 Acknowledgements
+## Acknowledgements
 
 This project was developed as part of:
 
@@ -254,7 +254,7 @@ and expanded into an independent research-oriented system.
 
 ---
 
-## 👤 Author
+## Author
 
 **Bo Fu**  
 M.Sc. Informatik, TU Darmstadt  
