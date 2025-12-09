@@ -74,6 +74,93 @@ per-state cost from `O(n²)` to `O(n)`.
 
 ---
 
+## Optimization Techniques
+
+This solver combines several HPC-oriented optimizations to make exhaustive QUBO evaluation feasible on GPUs:
+
+### 1. Gray-Code State Enumeration (Engineering-Level Implementation)
+The solver enumerates `2ⁿ` binary states using Gray-code ordering, but unlike the conceptual description in the Background section, the implementation uses:
+
+- `std::countr_zero(k+1)` on CPU  
+- CUDA intrinsic `__ffsll(k+1) - 1` on GPU  
+
+to compute the exact bit-flip index in `O(1)`.  
+Only a single bit flip is applied via:
+
+```cpp
+state ^= (1ULL << bitIndex);
+```
+
+This avoids rebuilding a state vector and enables extremely lightweight per-thread state transitions.
+
+### 2. Incremental Energy Update (ΔE Optimization)
+Instead of recomputing
+
+```text
+E(x) = xᵀ Q x
+```
+
+in `O(n²)` for every new state, the solver updates the energy in **O(n)** using a row-wise ΔE formulation:
+
+```text
+E_new = E_old + ΔEᵢ
+```
+
+Specialized implementations are provided for both:
+
+- **Dense matrices**
+- **Sparse CSR matrices**
+
+This optimization is responsible for the majority of the speedup.
+
+### 3. Bitwise 64-bit State Representation
+Each binary state is stored in a single 64-bit integer.  
+All bit queries are constant-time:
+
+```cpp
+(state >> bitIndex) & 1ULL
+```
+
+This eliminates memory allocations and improves GPU register efficiency.
+
+### 4. Parallel Partitioning of the State Space
+The state space is divided across GPU threads by fixing the highest `numFixedBits`, giving each thread a contiguous search region:
+
+```text
+tid → prefix bits
+thread enumerates remaining low bits via Gray code
+```
+
+This ensures:
+
+- high occupancy  
+- balanced workload  
+- portability across different GPUs (T4, V100, A100)
+
+### 5. Specialized Dense and Sparse CUDA Kernels
+Two independent kernels are implemented:
+
+- **Dense kernel:** row-major access, optimized for small/moderate n  
+- **Sparse kernel:** CSR structure, skipping lower-triangular entries  
+
+Sparse kernels show especially strong scaling on MaxCut instances.
+
+### 6. GPU Hardware–Aware Thread Scaling
+The solver automatically selects the number of threads:
+
+```cpp
+numThreads = min( 2ᵏ , SM_count × maxThreadsPerMultiprocessor )
+```
+
+This prevents oversubscription and ensures the GPU is fully utilized.
+
+---
+
+Together, these optimizations reduce the brute-force complexity from  
+`O(n² · 2ⁿ)` to **O(n · 2ⁿ)** and enable the observed **20–70× speedups** on real hardware.
+
+---
+
 ## Repository Structure
 
 ```text
