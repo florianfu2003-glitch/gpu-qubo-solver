@@ -34,9 +34,9 @@ void print_gpu_info()
 
 int main()
 {
-    using iT = IndexType;   // unsigned int
-    using vT = ValueType;   // double
-    using sT = StateType;   // unsigned char
+    using iT = IndexType;   
+    using vT = ValueType;   
+    using sT = StateType;   
 
 #ifdef WITH_CUDA
     print_gpu_info();
@@ -45,17 +45,14 @@ int main()
 #endif
 
     std::vector<std::string> matrices = {
-        // block encoding (sparse)
         "../data/block_encoding_10.mtx",
         "../data/block_encoding_20.mtx",
         "../data/block_encoding_30.mtx",
 
-        // one-hot (dense)
         "../data/one_hot_encoding_10.mtx",
         "../data/one_hot_encoding_20.mtx",
         "../data/one_hot_encoding_25.mtx",
 
-        // maxcut (sparse)
         "../data/maxcut_g000134_qubo.mtx",
         "../data/maxcut_g000538_qubo.mtx",
         "../data/maxcut_g000750_qubo.mtx",
@@ -63,7 +60,6 @@ int main()
         "../data/maxcut_g001940_qubo.mtx",
         "../data/maxcut_g002768_qubo.mtx",
 
-        // coloring (sparse)
         "../data/coloring_g000072_qubo.mtx",
         "../data/coloring_g001055_qubo.mtx",
         "../data/coloring_g001291_qubo.mtx",
@@ -77,13 +73,11 @@ int main()
         std::cout << "\n===========================================\n";
         std::cout << "Matrix: " << file << "\n";
 
-        // MUST USE readMatrixMarket<vT, iT>
         auto sparseMat = readMatrixMarket<vT, iT>(file);
 
         size_t n = sparseMat.rows;
         std::cout << n << " x " << n << ", nnz = " << sparseMat.nnz << "\n";
 
-        // ---------------- CPU ----------------
         CPUQUBOBruteForcer<iT, vT, sT, SparseMatrix<vT, iT>> cpu_solver;
 
         double cpu_time = 0.0;
@@ -100,7 +94,6 @@ int main()
         std::cout << "CPU time = " << cpu_time << " ms\n";
 
 #ifdef WITH_CUDA
-        // ---------------- GPU ----------------
         GPUQUBOBruteForcer<iT, vT, sT, SparseMatrix<vT, iT>> gpu_solver;
 
         float gpu_time = 0.0f;
