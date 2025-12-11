@@ -171,26 +171,48 @@ Together, these optimizations reduce the brute-force complexity from
 ```text
 gpu-qubo-solver/
 │
-├── CMakeLists.txt           # Top-level CMake build script
-├── run.sh                   # Optional helper script (e.g. SLURM job)
+├── CMakeLists.txt                 # Top-level CMake build script
+├── run.sh                         # Optional helper script (e.g., SLURM job)
+│
+├── data/                          # Benchmark QUBO matrices (.mtx)
+│   ├── block_encoding_*.mtx       # Dense synthetic matrices
+│   ├── one_hot_encoding_*.mtx     # Fully dense QUBOs
+│   ├── maxcut_*.mtx               # Sparse MaxCut graph QUBOs
+│   └── coloring_*.mtx             # Medium-sparse coloring QUBOs
 │
 ├── src/
-│   ├── CMakeLists.txt       # CMake configuration for executable
-│   ├── main.cpp             # Entry point (CPU & GPU comparison)
-│   ├── cpu_brute_force.h    # Naive + incremental CPU solvers
-│   ├── gpu_brute_force.cu   # CUDA kernels + GPU solver
+│   ├── CMakeLists.txt             # CMake configuration for executable
+│   ├── main.cpp                   # Entry point (CPU & GPU comparison)
+│   │
+│   ├── cpu_brute_force.h          # Naive + incremental CPU solvers
+│   ├── gpu_brute_force.cu         # CUDA kernels + GPU solver
 │   ├── gpu_brute_force.h
-│   ├── qubo_energy.h        # Dense & sparse energy + incremental ΔE
-│   ├── matrix.h             # Dense / sparse matrix structures
-│   ├── matrix_reader.h      # MatrixMarket (.mtx) loader
-│   ├── state_vector.h       # Bitset ↔ vector utilities
-│   ├── datatypes.h          # Global typedefs
-│   ├── cuda_util.h          # CUDA helper macros
-│   ├── cuda_timer.h         # GPU timing helpers
+│   │
+│   ├── qubo_energy.h              # Dense & sparse energy + incremental ΔE
+│   ├── matrix.h                   # Dense / sparse matrix structures
+│   ├── matrix_reader.h            # MatrixMarket (.mtx) loader
+│   ├── state_vector.h             # Bitset ↔ vector utilities
+│   ├── datatypes.h                # Global typedefs
+│   ├── cuda_util.h                # CUDA helper macros
+│   ├── cuda_timer.h               # GPU timing helpers
 │   ├── cuda_debug.h
-│   └── qubo_brute_forcer.h  # Base class for CPU/GPU solvers
+│   └── qubo_brute_forcer.h        # Base class for CPU/GPU solvers
+
 ```
 
+### Dataset
+
+This repository includes several small QUBO matrices in MatrixMarket format () for benchmarking: `.mtx`
+
+Block-encoding QUBOs (synthetic)
+
+One-hot encoding QUBOs (dense)
+
+MaxCut QUBOs (sparse graph benchmarks)
+
+Coloring QUBOs (medium sparsity)
+
+All matrices are included for full reproducibility of the experiments.
 
 ---
 
