@@ -1,15 +1,5 @@
 # GPU-Accelerated QUBO Brute-Force Solver  
 
-## TL;DR
-
-Fully parallel GPU brute-force solver for QUBO using Gray-code + incremental ΔE
-
-Supports dense & sparse matrices, up to 63 variables
-
-Achieves 20–70× GPU speedup over optimized CPU implementation
-
----
-
 ## CUDA • C++ • HPC • Dense & Sparse Matrices • Gray-Code Incremental Update
 
 This project implements a **massively parallel brute-force solver** for  
@@ -93,7 +83,7 @@ per-state cost from `O(n²)` to `O(n)`.
 
 This solver combines several HPC-oriented optimizations to make exhaustive QUBO evaluation feasible on GPUs:
 
-### 1. Gray-Code State Enumeration (Engineering-Level Implementation)
+### 1. Gray-Code State Enumeration
 The solver enumerates `2ⁿ` binary states using Gray-code ordering, but unlike the conceptual description in the Background section, the implementation uses:
 
 - `std::countr_zero(k+1)` on CPU  
@@ -335,6 +325,14 @@ The GPU solver consistently achieves significant acceleration for medium-to-larg
 
 ---
 
+<img width="980" height="588" alt="GPU vs CPU Runtime vs n" src="https://github.com/user-attachments/assets/8fd67d93-cbca-4df3-8af0-a15c5a6a1e8b" />
+
+---
+
+<img width="974" height="578" alt="GPU Speedup vs n" src="https://github.com/user-attachments/assets/313c913a-b388-476a-9c41-5fcdb663bbef" />
+
+---
+
 ### **Key Observations**
 
 - **GPU is slower than CPU for very small QUBOs (n < 12)**  
@@ -343,12 +341,12 @@ The GPU solver consistently achieves significant acceleration for medium-to-larg
 - **Performance crossover occurs around n ≈ 18–20**  
   From this point on, the GPU solver consistently outperforms the CPU.
 
-- **For large sparse QUBOs (n ≥ 25), GPU achieves 30–70× speedup**  
+- **For large sparse QUBOs (n ≥ 25), GPU speedup is typically around 25–60×, with MaxCut cases reaching 30–60×**  
   - Sparse MaxCut cases show the best scaling  
   - Dense one-hot encoding also benefits greatly
-
-- **Maximum observed speedup: 67.56× (One-hot, n=25)**  
-- **Typical speedup range for n ≥ 20: 20× – 60×**
+ 
+- **For larger structured QUBOs, speedups are typically in the 25–60× range,
+with a maximum observed speedup of 67.56× (One-hot, n=25)**
 
 ---
 
@@ -418,9 +416,16 @@ MaxCut and Coloring instances in the dataset demonstrate sparsity of only a few 
 | **MaxCut**           | Highly sparse   | CPU significantly faster than dense | GPU shows **up to 56×** speedup | CSR greatly reduces memory bandwidth  |
 | **Coloring**         | Medium sparsity | CPU moderately fast                 | GPU achieves **26×** at n=28    | Sparse layout reduces work per state  |
 
+---
+
+<img width="980" height="584" alt="Dense vs Sparse GPU Runtime" src="https://github.com/user-attachments/assets/ad7900dc-8f6d-4539-9205-152a16d765b1" />
+
+---
+
 Key Observation:
 
-Sparse QUBO matrices consistently outperform dense ones on GPUs at larger problem sizes due to lower per-state memory traffic and better utilization of incremental updates.
+Sparse QUBO matrices often outperform dense ones for large, highly sparse instances because each ΔE update touches far fewer elements.
+However, the advantage depends on the actual sparsity pattern—when average row density is higher, dense kernels may match or exceed sparse performance.
 
 ---
 
