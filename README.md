@@ -568,6 +568,10 @@ The current implementation does not exploit multi-GPU scaling or distributed enu
 Limited CPU-GPU overlap:
 The solver executes either CPU or GPU enumeration, but does not use hybrid scheduling or pipelined computation.
 
+For non-symmetric or strictly upper-triangular QUBO inputs without explicit symmetric entries,
+the incremental energy update would require additional handling (e.g., explicit matrix
+symmetrization or column access).
+
 ---
 
 ## Future Work
