@@ -86,7 +86,7 @@ This solver combines several HPC-oriented optimizations to make exhaustive QUBO 
 ### 1. Gray-Code State Enumeration
 The solver enumerates `2ⁿ` binary states using Gray-code ordering, but unlike the conceptual description in the Background section, the implementation uses:
 
-- `std::countr_zero(k+1)` on CPU  
+- `__builtin_ctzll` on CPU  
 - CUDA intrinsic `__ffsll(k+1) - 1` on GPU  
 
 to compute the exact bit-flip index in `O(1)`.  
